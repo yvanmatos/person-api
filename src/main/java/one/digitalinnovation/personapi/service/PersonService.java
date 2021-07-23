@@ -1,5 +1,7 @@
 package one.digitalinnovation.personapi.service;
 
+import one.digitalinnovation.personapi.dto.mapper.PersonMapper;
+import one.digitalinnovation.personapi.dto.request.PersonDTO;
 import one.digitalinnovation.personapi.dto.response.MessageRespondeDTO;
 import one.digitalinnovation.personapi.entity.Person;
 import one.digitalinnovation.personapi.repository.PersonRepository;
@@ -12,16 +14,21 @@ public class PersonService {
 
     private PersonRepository personRepository;
 
+    private final PersonMapper personMapper = PersonMapper.INSTANCE;
+
     @Autowired
     public PersonService(PersonRepository personRepository) {
         this.personRepository = personRepository;
     }
 
-    public MessageRespondeDTO createPerson(Person person) {
-        Person savedPerson = personRepository.save(person);
+    public MessageRespondeDTO createPerson(PersonDTO personDTO) {
+
+        Person personToSave = personMapper.toModel(personDTO);
+        Person savedPerson = personRepository.save(personToSave);
+
         return MessageRespondeDTO
                 .builder()
-                .message("Create person with ID" + savedPerson.getId())
+                .message("Create person with ID " + savedPerson.getId())
                 .build();
     }
 }
